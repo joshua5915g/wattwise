@@ -1,4 +1,4 @@
-# SolarAI - Intelligent Energy Forecasting Pipeline
+# Wattwise - Intelligent Energy Forecasting Pipeline
 
 **The Problem**
 Renewable energy is unpredictable. Homeowners lose efficiency because they cannot anticipate solar output drops due to micro-weather patterns.
@@ -23,3 +23,4 @@ A full-stack ML pipeline that predicts solar efficiency 24 hours in advance and 
 2. `pip install -r requirements.txt`
 3. Create a `.env` file with `OPENWEATHER_API_KEY` and `GEMINI_API_KEY`.
 4. `streamlit run app.py`
+
