@@ -21,6 +21,7 @@ from streamlit_autorefresh import st_autorefresh
 # Add src to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from src.utils import generate_weather_advice, categorize_efficiency, get_time_emoji
+from src.train_model import generate_synthetic_dataset, train_model, save_model
 
 # Page configuration - Force sidebar expanded
 st.set_page_config(
@@ -56,7 +57,6 @@ st.markdown("""
         max-width: 100% !important;
     }
     
-    /* Fix scrolling - ensure content is accessible */
     .main .block-container {
         margin-top: 0 !important;
         overflow: visible !important;
@@ -98,9 +98,8 @@ st.markdown("""
     [data-testid="stSidebar"] [data-testid="stBaseButton-header"],
     [data-testid="stSidebar"] [data-testid="baseButton-headerNoPadding"],
     .st-emotion-cache-eczf16,
-    .st-emotion-cache-1egp75f {
+    .st-emotion-cache-15huuew {
         color: #00FF00 !important;
-        background: rgba(0, 255, 136, 0.2) !important;
         border: 1px solid #00FF00 !important;
     }
     
@@ -138,13 +137,13 @@ st.markdown("""
     
     .metric-card:hover {
         border-color: rgba(0, 255, 136, 0.6);
-        transform: translateY(-2px);
+        box-shadow: 0 8px 40px rgba(0, 255, 136, 0.2);
+        transform: translateY(-5px);
     }
     
     .metric-label {
         color: #a0a0a0;
-        font-size: 0.8rem;
-        font-weight: 500;
+        font-size: 0.85rem;
         text-transform: uppercase;
         letter-spacing: 1px;
         margin-bottom: 0.5rem;
@@ -201,14 +200,14 @@ st.markdown("""
         font-size: 1rem;
         font-weight: 600;
         margin: 1.5rem 0 1rem 0;
-        padding-bottom: 0.5rem;
-        border-bottom: 1px solid rgba(0, 255, 136, 0.2);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
     }
     
-    /* Premium Map Section */
     .map-section {
         background: rgba(18, 18, 26, 0.6);
-        backdrop-filter: blur(12px);
+        backdrop-filter: blur(10px);
         border: 1px solid rgba(0, 255, 136, 0.25);
         border-radius: 20px;
         padding: 1.5rem;
@@ -262,7 +261,7 @@ st.markdown("""
     .map-stat-card {
         flex: 1;
         background: rgba(0, 255, 136, 0.05);
-        border: 1px solid rgba(0, 255, 136, 0.15);
+        border: 1px solid rgba(0, 255, 136, 0.1);
         border-radius: 12px;
         padding: 1rem;
         text-align: center;
@@ -380,9 +379,22 @@ st.markdown("""
 @st.cache_resource
 def load_model():
     model_path = "src/models/solar_prediction_model.pkl"
+    
+    # Auto-train if model doesn't exist (Self-healing deployment)
     if not Path(model_path).exists():
-        st.error("❌ Model not found. Run: `python src/train_model.py`")
-        st.stop()
+        with st.spinner("🧠 Training AI Model for the first time... (This takes ~10 seconds)"):
+            try:
+                # Generate data
+                df = generate_synthetic_dataset(days=365)
+                # Train model
+                model, _ = train_model(df)
+                # Save model
+                save_model(model, model_dir="src/models")
+                st.success("✅ Model trained successfully!")
+            except Exception as e:
+                st.error(f"❌ Failed to train model: {str(e)}")
+                st.stop()
+                
     return joblib.load(model_path)
 
 
@@ -455,16 +467,20 @@ def create_solar_curve_chart(data):
     fig.add_annotation(
         x=peak_hour['Hour_Label'],
         y=peak_hour['Energy_Output'],
-        text=f"Peak: {peak_hour['Energy_Output']:.2f} kWh",
+        text="PEAK OUTPUT",
         showarrow=True,
         arrowhead=2,
-        arrowcolor='#00ff88',
-        font=dict(color='#00ff88', size=11),
-        bgcolor='rgba(10, 10, 15, 0.8)',
-        bordercolor='#00ff88',
-        borderwidth=1
+        arrowcolor="#ffffff",
+        font=dict(color="#ffffff", size=10),
+        bgcolor="rgba(0,0,0,0.5)",
+        bordercolor="#00ff88",
+        borderwidth=1,
+        borderpad=4,
+        ax=0,
+        ay=-40
     )
     
+    # Layout styling
     fig.update_layout(
         title=dict(
             text='⚡ Daily Solar Output Curve',
@@ -793,16 +809,16 @@ def main():
                 advice = generate_weather_advice(prediction_data, st.secrets['GEMINI_API_KEY'])
             else:
                 # Context-aware fallback advice based on current slider values
-                if cloud_cover > 70:
-                    advice = f"☁️ With {cloud_cover:.0f}% cloud cover, delay high-energy tasks like laundry until conditions improve. Consider scheduling for tomorrow if the forecast shows clearer skies."
-                elif cloud_cover > 40:
-                    advice = f"⛅ Partial clouds at {cloud_cover:.0f}% - you'll still generate decent power. Run your dishwasher between 11 AM - 2 PM to catch the peak output window."
-                elif temperature > 40:
-                    advice = f"🌡️ High temperature ({temperature:.0f}°C) may reduce panel efficiency slightly. Morning hours (8-11 AM) will likely be your sweet spot today."
-                elif humidity > 80:
-                    advice = f"💧 High humidity ({humidity:.0f}%) might cause slight haze. Output is good, but peak performance expected between 10 AM - 1 PM."
+                if active_cloud > 70:
+                    advice = f"☁️ With {active_cloud:.0f}% cloud cover, delay high-energy tasks like laundry until conditions improve. Consider scheduling for tomorrow if the forecast shows clearer skies."
+                elif active_cloud > 40:
+                    advice = f"⛅ Partial clouds at {active_cloud:.0f}% - you'll still generate decent power. Run your dishwasher between 11 AM - 2 PM to catch the peak output window."
+                elif active_temp > 40:
+                    advice = f"🌡️ High temperature ({active_temp:.0f}°C) may reduce panel efficiency slightly. Morning hours (8-11 AM) will likely be your sweet spot today."
+                elif active_humidity > 80:
+                    advice = f"💧 High humidity ({active_humidity:.0f}%) might cause slight haze. Output is good, but peak performance expected between 10 AM - 1 PM."
                 else:
-                    advice = f"🌞 Excellent conditions! Clear skies and {temperature:.0f}°C is near optimal. Run all your heavy appliances between 10 AM - 3 PM to maximize free solar power."
+                    advice = f"🌞 Excellent conditions! Clear skies and {active_temp:.0f}°C is near optimal. Run all your heavy appliances between 10 AM - 3 PM to maximize free solar power."
         except Exception as e:
             advice = f"💡 Based on current conditions: Optimize appliance usage during peak sun hours (10 AM - 3 PM) for maximum savings."
         
