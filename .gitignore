@@ -1,0 +1,58 @@
+# Dependencies
+node_modules/
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build output
+.next/
+out/
+dist/
+build/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.pyc
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*
+
+# Vercel
+.vercel
+
+# Testing
+.pytest_cache/
+coverage/
+
+# Database (runtime generated)
+*.db
+*.sqlite
+*.sqlite3
+data/*.db
+
+# Old Streamlit files (if any remain)
+.streamlit/
+
+# Misc
+*.bak
+*.tmp
+.env*.local
