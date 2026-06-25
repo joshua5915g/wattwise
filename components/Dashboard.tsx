@@ -137,6 +137,7 @@ export default function Dashboard({
             finally { setRefreshing(false); }
         };
         if (weather || expMode) run();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [weather, expMode, simTemp, simCloud, simHum, panelKw, rate]);
 
     // ── Derived ──────────────────────────────────────────────────
