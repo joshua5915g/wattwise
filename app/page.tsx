@@ -3,21 +3,39 @@ import Link from 'next/link';
 
 export default function Home() {
     return (
-        <main className="min-h-screen p-4 md:p-8">
-            <div className="mb-8 rounded-3xl border border-white/10 bg-slate-900/80 p-6 shadow-xl shadow-slate-900/20">
-                <h1 className="text-4xl font-bold text-white mb-3">WattWise Solar Dashboard</h1>
-                <p className="text-sm text-slate-300 mb-4">
-                    View live weather predictions and solar panel performance in real time.
-                    For controlled scenario testing, use the dedicated experiment page.
-                </p>
+        <>
+            {/* Page header */}
+            <div style={{
+                display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                marginBottom: 24, paddingBottom: 20,
+                borderBottom: '1px solid var(--b1)',
+                flexWrap: 'wrap', gap: 12,
+            }}>
+                <div>
+                    <div style={{ fontSize: 11, fontWeight: 500, letterSpacing: '0.07em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 4 }}>
+                        Live Mode
+                    </div>
+                    <h1 style={{ fontSize: '1.1rem', fontWeight: 700, color: 'var(--t1)', letterSpacing: '-0.02em' }}>
+                        Solar Intelligence Dashboard
+                    </h1>
+                    <p style={{ fontSize: 13, color: 'var(--t2)', marginTop: 3 }}>
+                        Real-time weather · AI forecasting · Financial optimisation
+                    </p>
+                </div>
                 <Link
                     href="/experiment"
-                    className="inline-flex rounded-full bg-neon-green px-5 py-2 text-sm font-semibold text-slate-950 transition hover:bg-neon-green/90"
+                    style={{
+                        display: 'inline-flex', alignItems: 'center', gap: 6,
+                        padding: '7px 14px', borderRadius: 8, fontSize: 13, fontWeight: 500,
+                        background: 'var(--b3)', border: '1px solid var(--b1)',
+                        color: 'var(--t2)', textDecoration: 'none',
+                    }}
                 >
-                    Go to Experiment Mode
+                    🧪 Experiment Mode →
                 </Link>
             </div>
+
             <Dashboard />
-        </main>
+        </>
     );
 }

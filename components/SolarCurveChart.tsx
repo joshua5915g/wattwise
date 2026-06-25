@@ -13,94 +13,153 @@ export default function SolarCurveChart({ prediction }: SolarCurveChartProps) {
     const handleDownloadCSV = () => {
         const { hourly_output } = prediction;
         if (!hourly_output || hourly_output.length === 0) return;
-
-        let csvContent = "data:text/csv;charset=utf-8,";
-        csvContent += "Hour,Predicted Output (kWh)\n";
-        
-        hourly_output.forEach((output, index) => {
-            const hourFormatted = `${index.toString().padStart(2, '0')}:00`;
-            csvContent += `${hourFormatted},${output}\n`;
+        let csv = 'Hour,Predicted Output (kWh)\n';
+        hourly_output.forEach((output, i) => {
+            csv += `${i.toString().padStart(2, '0')}:00,${output}\n`;
         });
-
-        const encodedUri = encodeURI(csvContent);
-        const link = document.createElement("a");
-        link.setAttribute("href", encodedUri);
-        link.setAttribute("download", "wattwise_solar_prediction.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'wattwise_solar_prediction.csv';
+        a.click();
+        URL.revokeObjectURL(url);
     };
 
     const hourLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
+    // Theoretical clear-sky reference (bell curve)
+    const clearSky = hourLabels.map((_, i) => {
+        const peakHour = 13;
+        const spread = 5;
+        const val = Math.exp(-0.5 * Math.pow((i - peakHour) / spread, 2));
+        return parseFloat((val * (prediction.peak_output * 1.3)).toFixed(3));
+    });
+
     return (
-        <div className="glass-card p-6 min-h-[400px] relative">
-            <div className="w-full flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-white h-0 opacity-0 overflow-hidden m-0 p-0 absolute">Solar</h3>
-                <div />
-                <button 
-                    onClick={handleDownloadCSV}
-                    className="px-3 py-1.5 bg-primary/20 hover:bg-primary/40 text-primary text-sm font-semibold rounded-lg transition-colors flex items-center border border-primary/30 z-10"
-                >
-                    <span className="mr-2">⬇</span> Download CSV
-                </button>
+        <div className="glass-card p-6 min-h-[420px] relative overflow-hidden">
+            <div
+                className="metric-card-accent"
+                style={{ background: 'linear-gradient(90deg, #f59e0b, rgba(6,182,212,0.5), transparent)' }}
+            />
+
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                    <div>
+                        <div className="section-title">
+                            ⚡ Solar Output Forecast
+                        </div>
+                        <div className="text-xs mt-0.5" style={{ color: 'var(--text-secondary)' }}>
+                            24-hour predicted generation curve
+                        </div>
+                    </div>
+                </div>
+                <div className="flex items-center gap-2">
+                    {/* Legend */}
+                    <div className="flex items-center gap-4 text-[11px]" style={{ color: 'var(--text-secondary)' }}>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-6 h-0.5 rounded" style={{ background: '#f59e0b' }} />
+                            Predicted
+                        </div>
+                        <div className="flex items-center gap-1.5">
+                            <div className="w-6 h-0.5 rounded" style={{ background: 'rgba(6,182,212,0.5)', borderTop: '1px dashed #06b6d4' }} />
+                            Clear sky
+                        </div>
+                    </div>
+                    <button
+                        onClick={handleDownloadCSV}
+                        className="btn-primary text-xs px-3 py-2"
+                        id="download-csv-btn"
+                    >
+                        ⬇ CSV
+                    </button>
+                </div>
             </div>
+
             <Plot
                 data={[
+                    // Clear-sky reference (dashed)
+                    {
+                        x: hourLabels,
+                        y: clearSky,
+                        type: 'scatter',
+                        mode: 'lines',
+                        name: 'Clear Sky',
+                        line: {
+                            color: 'rgba(6,182,212,0.4)',
+                            width: 1.5,
+                            dash: 'dot',
+                        },
+                        hovertemplate: '<b>%{x}</b><br>Clear sky: %{y:.2f} kWh<extra></extra>',
+                    },
+                    // Predicted output (filled)
                     {
                         x: hourLabels,
                         y: prediction.hourly_output,
                         type: 'scatter',
                         mode: 'lines',
+                        name: 'Predicted',
                         fill: 'tozeroy',
-                        fillcolor: 'rgba(0, 255, 136, 0.3)',
-                        line: { color: '#00ff88', width: 3 },
-                        hovertemplate: '<b>%{x}</b><br>Output: %{y:.2f} kWh<extra></extra>',
+                        fillcolor: 'rgba(245,158,11,0.12)',
+                        line: {
+                            color: '#f59e0b',
+                            width: 3,
+                            shape: 'spline',
+                            smoothing: 0.8,
+                        },
+                        hovertemplate: '<b>%{x}</b><br>Output: <b>%{y:.2f} kWh</b><extra></extra>',
                     },
                 ]}
                 layout={{
-                    title: {
-                        text: '⚡ Daily Solar Output Curve',
-                        font: { color: '#ffffff', size: 16, family: 'Inter' },
-                        x: 0,
-                    },
                     paper_bgcolor: 'rgba(0,0,0,0)',
                     plot_bgcolor: 'rgba(0,0,0,0)',
-                    font: { family: 'Inter', color: '#a0a0a0' },
+                    font: { family: 'Inter', color: '#6060a0', size: 11 },
                     xaxis: {
-                        title: 'Hour of Day',
-                        showgrid: false,
+                        showgrid: true,
+                        gridcolor: 'rgba(255,255,255,0.04)',
                         zeroline: false,
-                        color: '#a0a0a0',
+                        color: '#5050a0',
                         tickangle: -45,
+                        tickfont: { size: 10 },
                     },
                     yaxis: {
-                        title: 'Energy Output (kWh)',
-                        showgrid: false,
+                        title: { text: 'kWh', font: { size: 11 } },
+                        showgrid: true,
+                        gridcolor: 'rgba(255,255,255,0.04)',
                         zeroline: false,
-                        color: '#a0a0a0',
+                        color: '#5050a0',
+                        tickfont: { size: 10 },
                     },
-                    height: 350,
-                    margin: { l: 60, r: 30, t: 60, b: 80 },
+                    height: 330,
+                    margin: { l: 48, r: 16, t: 10, b: 70 },
                     showlegend: false,
                     hovermode: 'x unified',
+                    hoverlabel: {
+                        bgcolor: 'rgba(13,13,31,0.95)',
+                        bordercolor: 'rgba(245,158,11,0.4)',
+                        font: { family: 'Inter', color: '#f0f0ff', size: 12 },
+                    },
                     annotations: [
                         {
                             x: hourLabels[prediction.peak_hour],
                             y: prediction.peak_output,
-                            text: `Peak: ${prediction.peak_output.toFixed(2)} kWh`,
+                            text: `⚡ Peak ${prediction.peak_output.toFixed(2)} kWh`,
                             showarrow: true,
-                            arrowhead: 2,
-                            arrowcolor: '#00ff88',
-                            font: { color: '#00ff88', size: 12 },
-                            bgcolor: 'rgba(10, 10, 15, 0.9)',
-                            bordercolor: '#00ff88',
+                            arrowhead: 0,
+                            arrowcolor: '#f59e0b',
+                            arrowwidth: 1.5,
+                            ax: 0,
+                            ay: -40,
+                            font: { color: '#fbbf24', size: 11, family: 'Space Grotesk' },
+                            bgcolor: 'rgba(13,13,31,0.9)',
+                            bordercolor: 'rgba(245,158,11,0.4)',
                             borderwidth: 1,
-                            borderpad: 4,
+                            borderpad: 6,
                         },
                     ],
                 }}
-                config={{ displayModeBar: false }}
+                config={{ displayModeBar: false, responsive: true }}
                 className="w-full"
             />
         </div>
