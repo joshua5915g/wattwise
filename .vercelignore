@@ -1,10 +1,10 @@
-# Ignore local python files and API (prevent Vercel from deploying them as serverless functions)
-api/
-requirements.txt
-local_server.py
-__pycache__/
-venv/
-.venv/
+# Ignore ONLY the root-level python files and API
+/api/
+/requirements.txt
+/local_server.py
+/__pycache__/
+/venv/
+/.venv/
 
 # Ignore local builds and dependency folders
 .next/
