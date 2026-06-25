@@ -71,7 +71,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" className={inter.variable}>
             <head>
-                <link rel="icon" href="/favicon.ico" />
+                <link rel="icon" href="/favicon.png" type="image/png" />
+                <link rel="apple-touch-icon" href="/favicon.png" />
+                <meta name="theme-color" content="#09090F" />
                 {/* JetBrains Mono for data values — loaded separately as it's not in next/font/google subset */}
                 <link rel="preconnect" href="https://fonts.googleapis.com" />
                 <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
