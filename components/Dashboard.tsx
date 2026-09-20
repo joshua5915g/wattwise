@@ -18,6 +18,8 @@ import SolarGauge          from './SolarGauge';
 import CO2Card             from './CO2Card';
 import SavingsGoalCard     from './SavingsGoalCard';
 import PanelHealthCard     from './PanelHealthCard';
+import WelcomeGuideBanner  from './WelcomeGuideBanner';
+import HowItWorksModal     from './HowItWorksModal';
 
 interface DashboardProps {
     initialExperimentMode?: boolean;
@@ -62,6 +64,7 @@ export default function Dashboard({
     // M6: Live clock
     const [clock, setClock]               = useState('');
     const [notifOn, setNotifOn]           = useState(false);
+    const [isGuideOpen, setIsGuideOpen]   = useState(false);
 
     // ── Live clock (M6) ─────────────────────────────────────────
     useEffect(() => {
@@ -200,6 +203,13 @@ export default function Dashboard({
                     </div>
                     {/* Right: actions */}
                     <div className="print:hidden" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <button
+                            onClick={() => setIsGuideOpen(true)}
+                            className="btn btn-secondary"
+                            style={{ fontSize: 12, display: 'inline-flex', alignItems: 'center', gap: 5, color: 'var(--blue-bright)', borderColor: 'rgba(59,130,246,0.3)' }}
+                        >
+                            📖 Guide
+                        </button>
                         <button onClick={toggleNotif} className="btn btn-secondary" style={{ fontSize: 12 }}>
                             {notifOn ? '🔔 Alerts On' : '🔕 Alerts Off'}
                         </button>
@@ -214,6 +224,9 @@ export default function Dashboard({
                     </div>
                 </div>
             </div>
+
+            {/* ── Welcome & Quick Start Guide Banner (Dismissible) ── */}
+            <WelcomeGuideBanner onOpenGuide={() => setIsGuideOpen(true)} />
 
             {/* ── Page header ─────────────────────────────────── */}
             <div className="stagger-1" style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
@@ -403,9 +416,15 @@ export default function Dashboard({
                             </div>
                         </div>
                     </div>
-
                 </div>
             )}
+
+            {/* ── Interactive How It Works Guide Modal ── */}
+            <HowItWorksModal
+                isOpen={isGuideOpen}
+                onClose={() => setIsGuideOpen(false)}
+                onOpenExperiment={() => setExpMode(true)}
+            />
         </div>
     );
 }
