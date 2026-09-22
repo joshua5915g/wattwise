@@ -106,7 +106,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                         </div>
 
                         {/* Nav */}
-                        <nav style={{ padding: '12px 8px', flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
+                        <nav style={{ padding: '12px 8px', flex: 1, display: 'flex', flexDirection: 'column', gap: 2, overflowY: 'auto' }}>
                             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t4)', padding: '4px 10px 8px' }}>
                                 Platform
                             </div>
@@ -116,6 +116,24 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                     <rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/>
                                 </svg>
                                 Dashboard
+                            </a>
+                            <a href="#energy-flow" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                Energy Flow
+                            </a>
+                            <a href="#forecast" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/><line x1="16" x2="16" y1="2" y2="6"/><line x1="8" x2="8" y1="2" y2="6"/><line x1="3" x2="21" y1="10" y2="10"/>
+                                </svg>
+                                7-Day Forecast
+                            </a>
+                            <a href="#load-dispatcher" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                                </svg>
+                                Load Dispatcher
                             </a>
                             <a href="/experiment" className="sidebar-link">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -129,18 +147,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 </svg>
                                 Battery Optimizer
                             </a>
-                            <a href="#ai-advisor" className="sidebar-link">
-                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                    <path d="M12 8V4H8"/><rect width="16" height="12" x="4" y="8" rx="2"/>
-                                    <path d="M2 14h2m16 0h2M7 13v2m4-3v4m4-2v2"/>
-                                </svg>
-                                AI Advisor
-                            </a>
 
-                            <div style={{ margin: '12px 0', borderTop: '1px solid var(--b1)' }} />
+                            <div style={{ margin: '8px 0', borderTop: '1px solid var(--b1)' }} />
                             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t4)', padding: '4px 10px 8px' }}>
-                                Analysis
+                                Analysis & Geometry
                             </div>
+                            <a href="#geometry" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/>
+                                </svg>
+                                3D Roof Tilt
+                            </a>
+                            <a href="#calculator" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16" y1="14" y2="18"/><path d="M8 10h.01M12 10h.01M16 10h.01M8 14h.01M12 14h.01M8 18h.01M12 18h.01"/>
+                                </svg>
+                                Financial / Subsidy
+                            </a>
                             <a href="#health" className="sidebar-link">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
@@ -154,6 +177,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 Savings Goal
                             </a>
                         </nav>
+
 
                         {/* Footer */}
                         <div style={{ padding: '12px 16px', borderTop: '1px solid var(--b1)' }}>

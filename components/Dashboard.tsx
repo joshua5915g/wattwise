@@ -21,6 +21,15 @@ import PanelHealthCard     from './PanelHealthCard';
 import WelcomeGuideBanner  from './WelcomeGuideBanner';
 import HowItWorksModal     from './HowItWorksModal';
 
+// ── 6 New Next-Gen Features ──────────────────────────
+import Forecast7Day             from './Forecast7Day';
+import ApplianceDispatcher      from './ApplianceDispatcher';
+import LiveEnergyFlow           from './LiveEnergyFlow';
+import SolarFinancialCalculator from './SolarFinancialCalculator';
+import RoofGeometrySimulator    from './RoofGeometrySimulator';
+import WattBotChat              from './WattBotChat';
+
+
 interface DashboardProps {
     initialExperimentMode?: boolean;
     showExperimentControls?: boolean;
@@ -366,7 +375,12 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Row 3: Chart + AI Advisor */}
+                    {/* Row 3: Live Interactive Energy Flow Diagram */}
+                    <div id="energy-flow">
+                        <LiveEnergyFlow prediction={pred} electricityRate={rate} panelKw={panelKw} />
+                    </div>
+
+                    {/* Row 4: Chart + AI Advisor */}
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: 14 }}>
                         <SolarCurveChart prediction={pred} />
                         <div id="ai-advisor">
@@ -374,7 +388,40 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Row 4: Panel Health + Savings Goal */}
+                    {/* Row 5: 7-Day Solar Forecast & Energy Outlook */}
+                    <div id="forecast">
+                        <Forecast7Day weather={weather} panelKw={panelKw} rate={rate} />
+                    </div>
+
+                    {/* Row 6: Smart Appliance Load Dispatcher & Shifter */}
+                    <div id="load-dispatcher">
+                        <ApplianceDispatcher prediction={pred} electricityRate={rate} />
+                    </div>
+
+                    {/* Row 7: Battery Optimizer */}
+                    <div id="battery">
+                        <BatteryOptimization prediction={pred} electricityRate={rate} />
+                    </div>
+
+                    {/* Row 8: Rooftop Tilt, Azimuth & Shading Simulator */}
+                    <div id="geometry">
+                        <RoofGeometrySimulator
+                            panelKw={panelKw}
+                            rate={rate}
+                            annualKwh={pred.total_daily_output * 365}
+                        />
+                    </div>
+
+                    {/* Row 9: Solar Financial, ROI & Subsidy Calculator */}
+                    <div id="calculator">
+                        <SolarFinancialCalculator
+                            defaultCapacityKw={panelKw}
+                            defaultRate={rate}
+                            dailyGenerationKwh={pred.total_daily_output}
+                        />
+                    </div>
+
+                    {/* Row 10: Panel Health + Savings Goal */}
                     <div id="health goals" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
                         <div id="health">
                             <PanelHealthCard
@@ -388,12 +435,7 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Row 5: Battery Optimizer */}
-                    <div id="battery">
-                        <BatteryOptimization prediction={pred} electricityRate={rate} />
-                    </div>
-
-                    {/* Row 6: Data footer strip */}
+                    {/* Row 11: Data footer strip */}
                     <div className="card" style={{ padding: '12px 20px' }}>
                         <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 12, fontSize: 12 }}>
                             <div style={{ display: 'flex', gap: 20, flexWrap: 'wrap', alignItems: 'center' }}>
@@ -419,6 +461,15 @@ export default function Dashboard({
                 </div>
             )}
 
+            {/* ── Floating AI Solar Copilot ("WattBot") ── */}
+            <WattBotChat
+                prediction={pred}
+                weather={weather}
+                location={location}
+                panelKw={panelKw}
+                electricityRate={rate}
+            />
+
             {/* ── Interactive How It Works Guide Modal ── */}
             <HowItWorksModal
                 isOpen={isGuideOpen}
@@ -428,3 +479,4 @@ export default function Dashboard({
         </div>
     );
 }
+
