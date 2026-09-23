@@ -33,6 +33,8 @@ import GridOutagePlanner        from './GridOutagePlanner';
 import EVSolarSync              from './EVSolarSync';
 import FaultDiagnosticScanner   from './FaultDiagnosticScanner';
 import HistoricalAnalytics      from './HistoricalAnalytics';
+import CommunityLeaderboard     from './CommunityLeaderboard';
+
 
 
 
@@ -471,7 +473,6 @@ export default function Dashboard({
 
                     {/* Row 11: Panel Health + Savings Goal */}
                     <div id="health goals" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-
                         <div id="health">
                             <PanelHealthCard
                                 temperature={aTemp} efficiency={pred.efficiency_percent}
@@ -483,6 +484,16 @@ export default function Dashboard({
                             <SavingsGoalCard dailySavings={savings} />
                         </div>
                     </div>
+
+                    {/* Row 12: Community Leaderboard & Eco Badges */}
+                    <div id="community">
+                        <CommunityLeaderboard
+                            panelKw={panelKw}
+                            dailyKwh={pred.total_daily_output}
+                            location={location}
+                        />
+                    </div>
+
 
                     {/* Row 11: Data footer strip */}
                     <div className="card" style={{ padding: '12px 20px' }}>
