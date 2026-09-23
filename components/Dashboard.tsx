@@ -32,6 +32,8 @@ import IndiaSolarHeatmap        from './IndiaSolarHeatmap';
 import GridOutagePlanner        from './GridOutagePlanner';
 import EVSolarSync              from './EVSolarSync';
 import FaultDiagnosticScanner   from './FaultDiagnosticScanner';
+import HistoricalAnalytics      from './HistoricalAnalytics';
+
 
 
 
@@ -446,6 +448,17 @@ export default function Dashboard({
                             dailyGenerationKwh={pred.total_daily_output}
                         />
                     </div>
+
+                    {/* Row 10: Historical Analytics & Data Export Hub */}
+                    <div id="analytics">
+                        <HistoricalAnalytics
+                            prediction={pred}
+                            panelKw={panelKw}
+                            rate={rate}
+                            location={location}
+                        />
+                    </div>
+
 
                     {/* Row 10: Thermal Hotspot & Fault Diagnostic Engine */}
                     <div id="diagnostics">
