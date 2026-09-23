@@ -30,6 +30,8 @@ import RoofGeometrySimulator    from './RoofGeometrySimulator';
 import WattBotChat              from './WattBotChat';
 import IndiaSolarHeatmap        from './IndiaSolarHeatmap';
 import GridOutagePlanner        from './GridOutagePlanner';
+import EVSolarSync              from './EVSolarSync';
+
 
 
 
@@ -403,10 +405,16 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Row 6: Smart Appliance Load Dispatcher & Shifter */}
+                    {/* Row 7: Smart Appliance Load Dispatcher & Shifter */}
                     <div id="load-dispatcher">
                         <ApplianceDispatcher prediction={pred} electricityRate={rate} />
                     </div>
+
+                    {/* Row 8: Smart EV Solar Sync & Green Kilometers Estimator */}
+                    <div id="ev-sync">
+                        <EVSolarSync prediction={pred} panelKw={panelKw} electricityRate={rate} />
+                    </div>
+
 
                     {/* Row 7: Battery Optimizer */}
                     <div id="battery">
