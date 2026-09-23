@@ -34,6 +34,8 @@ import EVSolarSync              from './EVSolarSync';
 import FaultDiagnosticScanner   from './FaultDiagnosticScanner';
 import HistoricalAnalytics      from './HistoricalAnalytics';
 import CommunityLeaderboard     from './CommunityLeaderboard';
+import BifacialTrackerSimulator from './BifacialTrackerSimulator';
+
 
 
 
@@ -433,7 +435,7 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Row 8: Rooftop Tilt, Azimuth & Shading Simulator */}
+                    {/* Row 9: Rooftop Tilt, Azimuth & Shading Simulator */}
                     <div id="geometry">
                         <RoofGeometrySimulator
                             panelKw={panelKw}
@@ -441,6 +443,16 @@ export default function Dashboard({
                             annualKwh={pred.total_daily_output * 365}
                         />
                     </div>
+
+                    {/* Row 10: Bifacial Panels & Dual-Axis Solar Tracker Simulator */}
+                    <div id="tracker-simulator">
+                        <BifacialTrackerSimulator
+                            panelKw={panelKw}
+                            rate={rate}
+                            annualKwh={pred.total_daily_output * 365}
+                        />
+                    </div>
+
 
                     {/* Row 9: Solar Financial, ROI & Subsidy Calculator */}
                     <div id="calculator">
