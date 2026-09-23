@@ -153,6 +153,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 </svg>
                                 Battery Optimizer
                             </a>
+                            <a href="#outage-planner" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+                                </svg>
+                                Outage Survival
+                            </a>
 
                             <div style={{ margin: '8px 0', borderTop: '1px solid var(--b1)' }} />
                             <div style={{ fontSize: 10, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t4)', padding: '4px 10px 8px' }}>

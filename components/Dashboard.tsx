@@ -29,6 +29,8 @@ import SolarFinancialCalculator from './SolarFinancialCalculator';
 import RoofGeometrySimulator    from './RoofGeometrySimulator';
 import WattBotChat              from './WattBotChat';
 import IndiaSolarHeatmap        from './IndiaSolarHeatmap';
+import GridOutagePlanner        from './GridOutagePlanner';
+
 
 
 
@@ -410,6 +412,12 @@ export default function Dashboard({
                     <div id="battery">
                         <BatteryOptimization prediction={pred} electricityRate={rate} />
                     </div>
+
+                    {/* Row 8: Grid Blackout & Emergency Resilience Planner */}
+                    <div id="outage-planner">
+                        <GridOutagePlanner prediction={pred} panelKw={panelKw} />
+                    </div>
+
 
                     {/* Row 8: Rooftop Tilt, Azimuth & Shading Simulator */}
                     <div id="geometry">
