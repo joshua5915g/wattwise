@@ -28,6 +28,8 @@ import LiveEnergyFlow           from './LiveEnergyFlow';
 import SolarFinancialCalculator from './SolarFinancialCalculator';
 import RoofGeometrySimulator    from './RoofGeometrySimulator';
 import WattBotChat              from './WattBotChat';
+import IndiaSolarHeatmap        from './IndiaSolarHeatmap';
+
 
 
 interface DashboardProps {
@@ -388,10 +390,16 @@ export default function Dashboard({
                         </div>
                     </div>
 
-                    {/* Row 5: 7-Day Solar Forecast & Energy Outlook */}
+                    {/* Row 5: India Solar Irradiance Heatmap & Satellite Radar */}
+                    <div id="heatmap">
+                        <IndiaSolarHeatmap currentLocation={location} onSelectLocation={setLocation} />
+                    </div>
+
+                    {/* Row 6: 7-Day Solar Forecast & Energy Outlook */}
                     <div id="forecast">
                         <Forecast7Day weather={weather} panelKw={panelKw} rate={rate} />
                     </div>
+
 
                     {/* Row 6: Smart Appliance Load Dispatcher & Shifter */}
                     <div id="load-dispatcher">
