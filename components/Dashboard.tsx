@@ -31,6 +31,8 @@ import WattBotChat              from './WattBotChat';
 import IndiaSolarHeatmap        from './IndiaSolarHeatmap';
 import GridOutagePlanner        from './GridOutagePlanner';
 import EVSolarSync              from './EVSolarSync';
+import FaultDiagnosticScanner   from './FaultDiagnosticScanner';
+
 
 
 
@@ -445,8 +447,18 @@ export default function Dashboard({
                         />
                     </div>
 
-                    {/* Row 10: Panel Health + Savings Goal */}
+                    {/* Row 10: Thermal Hotspot & Fault Diagnostic Engine */}
+                    <div id="diagnostics">
+                        <FaultDiagnosticScanner
+                            panelKw={panelKw}
+                            rate={rate}
+                            annualKwh={pred.total_daily_output * 365}
+                        />
+                    </div>
+
+                    {/* Row 11: Panel Health + Savings Goal */}
                     <div id="health goals" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+
                         <div id="health">
                             <PanelHealthCard
                                 temperature={aTemp} efficiency={pred.efficiency_percent}

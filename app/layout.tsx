@@ -182,6 +182,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                                 </svg>
                                 Financial / Subsidy
                             </a>
+                            <a href="#diagnostics" className="sidebar-link">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8"/><line x1="21" x2="16.65" y1="21" y2="16.65"/>
+                                </svg>
+                                Fault Diagnostics
+                            </a>
                             <a href="#health" className="sidebar-link">
                                 <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                     <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
