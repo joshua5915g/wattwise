@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 
 const clamp = (value: number, min: number, max: number) => Math.min(max, Math.max(min, value));
-const round = (value: number, precision = 3) => Math.round(value * 10 ** precision) / 10;
+const round = (value: number, precision = 2) => Math.round(value * 10 ** precision) / (10 ** precision);
 const hours = Array.from({ length: 24 }, (_, index) => index);
 
 function getSolarShape(hour: number) {
-  const peakHour = 12;
-  const normalized = (hour - peakHour) / 6;
-  return clamp(Math.cos(normalized * Math.PI) * 1.2, 0, 1);
+  if (hour < 6 || hour > 18) return 0;
+  const normalized = (hour - 12) / 6; // -1 at 6 AM, 0 at 12 PM, +1 at 6 PM
+  return clamp(Math.cos(normalized * (Math.PI / 2)), 0, 1);
 }
 
 function computeBaseEfficiency(temperature: number, cloudCover: number, humidity: number) {
