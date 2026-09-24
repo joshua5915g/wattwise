@@ -39,6 +39,7 @@ import DiscomTariffEngine       from './DiscomTariffEngine';
 import RooftopShadingSimulator  from './RooftopShadingSimulator';
 import SatelliteSolarRadiation  from './SatelliteSolarRadiation';
 import PMSuryaGharAssistant     from './PMSuryaGharAssistant';
+import VirtualInverterTelemetry from './VirtualInverterTelemetry';
 
 
 
@@ -512,12 +513,20 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Row 10: Thermal Hotspot & Fault Diagnostic Engine */}
+                    {/* Row 15: Thermal Hotspot & Fault Diagnostic Engine */}
                     <div id="diagnostics">
                         <FaultDiagnosticScanner
                             panelKw={panelKw}
                             rate={rate}
                             annualKwh={pred.total_daily_output * 365}
+                        />
+                    </div>
+
+                    {/* Row 16: Virtual Inverter Hardware Telemetry Stream (SunSpec / Modbus IoT) */}
+                    <div id="virtual-inverter">
+                        <VirtualInverterTelemetry
+                            panelKw={panelKw}
+                            currentOutputKw={pred.peak_output}
                         />
                     </div>
 
