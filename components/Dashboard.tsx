@@ -38,6 +38,7 @@ import BifacialTrackerSimulator from './BifacialTrackerSimulator';
 import DiscomTariffEngine       from './DiscomTariffEngine';
 import RooftopShadingSimulator  from './RooftopShadingSimulator';
 import SatelliteSolarRadiation  from './SatelliteSolarRadiation';
+import PMSuryaGharAssistant     from './PMSuryaGharAssistant';
 
 
 
@@ -483,7 +484,15 @@ export default function Dashboard({
                         />
                     </div>
 
-                    {/* Row 10: Solar Financial, ROI & Subsidy Calculator */}
+                    {/* Row 12: PM Surya Ghar: Muft Bijli Yojana Application Kit & Subsidy Navigator */}
+                    <div id="pm-surya-ghar">
+                        <PMSuryaGharAssistant
+                            defaultCapacityKw={panelKw}
+                            currentRate={rate}
+                        />
+                    </div>
+
+                    {/* Row 13: Solar Financial, ROI & Subsidy Calculator */}
                     <div id="calculator">
                         <SolarFinancialCalculator
                             defaultCapacityKw={panelKw}
