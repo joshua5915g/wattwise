@@ -35,6 +35,7 @@ import FaultDiagnosticScanner   from './FaultDiagnosticScanner';
 import HistoricalAnalytics      from './HistoricalAnalytics';
 import CommunityLeaderboard     from './CommunityLeaderboard';
 import BifacialTrackerSimulator from './BifacialTrackerSimulator';
+import DiscomTariffEngine       from './DiscomTariffEngine';
 
 
 
@@ -454,7 +455,19 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Row 9: Solar Financial, ROI & Subsidy Calculator */}
+                    {/* Row 9: State-Wise Indian DISCOM Tariff & Time-of-Day Engine */}
+                    <div id="discom-tariff">
+                        <DiscomTariffEngine
+                            currentRate={rate}
+                            dailySolarKwh={pred.total_daily_output}
+                            onApplyRate={(newRate) => {
+                                setRate(newRate);
+                                setToast({ visible: true, msg: `⚡ Applied DISCOM rate ₹${newRate}/kWh to system` });
+                            }}
+                        />
+                    </div>
+
+                    {/* Row 10: Solar Financial, ROI & Subsidy Calculator */}
                     <div id="calculator">
                         <SolarFinancialCalculator
                             defaultCapacityKw={panelKw}
