@@ -36,6 +36,7 @@ import HistoricalAnalytics      from './HistoricalAnalytics';
 import CommunityLeaderboard     from './CommunityLeaderboard';
 import BifacialTrackerSimulator from './BifacialTrackerSimulator';
 import DiscomTariffEngine       from './DiscomTariffEngine';
+import RooftopShadingSimulator  from './RooftopShadingSimulator';
 
 
 
@@ -436,7 +437,7 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Row 9: Rooftop Tilt, Azimuth & Shading Simulator */}
+                    {/* Row 9: Rooftop Tilt, Azimuth & Orientation Simulator */}
                     <div id="geometry">
                         <RoofGeometrySimulator
                             panelKw={panelKw}
@@ -445,7 +446,16 @@ export default function Dashboard({
                         />
                     </div>
 
-                    {/* Row 10: Bifacial Panels & Dual-Axis Solar Tracker Simulator */}
+                    {/* Row 10: 3D Rooftop Solar Shading & Obstruction Simulator */}
+                    <div id="shading">
+                        <RooftopShadingSimulator
+                            panelKw={panelKw}
+                            rate={rate}
+                            dailyKwh={pred.total_daily_output}
+                        />
+                    </div>
+
+                    {/* Row 11: Bifacial Panels & Dual-Axis Solar Tracker Simulator */}
                     <div id="tracker-simulator">
                         <BifacialTrackerSimulator
                             panelKw={panelKw}
