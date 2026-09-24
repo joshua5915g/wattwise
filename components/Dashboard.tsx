@@ -37,6 +37,7 @@ import CommunityLeaderboard     from './CommunityLeaderboard';
 import BifacialTrackerSimulator from './BifacialTrackerSimulator';
 import DiscomTariffEngine       from './DiscomTariffEngine';
 import RooftopShadingSimulator  from './RooftopShadingSimulator';
+import SatelliteSolarRadiation  from './SatelliteSolarRadiation';
 
 
 
@@ -409,7 +410,12 @@ export default function Dashboard({
                         <IndiaSolarHeatmap currentLocation={location} onSelectLocation={setLocation} />
                     </div>
 
-                    {/* Row 6: 7-Day Solar Forecast & Energy Outlook */}
+                    {/* Row 6: Live Satellite Solar Radiation & Irradiance Stream (GHI / DNI / DHI) */}
+                    <div id="satellite-stream">
+                        <SatelliteSolarRadiation currentLocation={location} />
+                    </div>
+
+                    {/* Row 7: 7-Day Solar Forecast & Energy Outlook */}
                     <div id="forecast">
                         <Forecast7Day weather={weather} panelKw={panelKw} rate={rate} />
                     </div>
