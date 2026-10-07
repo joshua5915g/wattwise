@@ -429,17 +429,17 @@ export default function Dashboard({
                     </div>
 
 
-                    {/* Premium feature 1: AI-powered load shifting */}
+                    {/* Forecast-driven appliance scheduling */}
                     <div id="load-shifter-premium">
-                        <SmartLoadShifter dailyOutputKwh={pred.total_daily_output} electricityRate={rate} panelKw={panelKw} />
+                        <SmartLoadShifter hourlyOutput={pred.hourly_output} electricityRate={rate} />
                     </div>
 
-                    {/* Premium feature 2: storage optimization engine */}
+                    {/* Battery storage scenario */}
                     <div id="storage-optimizer-premium">
-                        <EnergyStorageOptimizer dailyOutputKwh={pred.total_daily_output} electricityRate={rate} />
+                        <EnergyStorageOptimizer hourlyOutput={pred.hourly_output} electricityRate={rate} />
                     </div>
 
-                    {/* Premium feature 3: carbon impact forecast */}
+                    {/* Carbon impact estimate */}
                     <div id="carbon-forecast-premium">
                         <CarbonForecastBoard dailyOutputKwh={pred.total_daily_output} />
                     </div>

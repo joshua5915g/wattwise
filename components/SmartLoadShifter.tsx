@@ -1,73 +1,90 @@
 'use client';
 
 interface SmartLoadShifterProps {
-  dailyOutputKwh: number;
-  electricityRate: number;
-  panelKw: number;
+    hourlyOutput: number[];
+    electricityRate: number;
 }
 
-export default function SmartLoadShifter({ dailyOutputKwh, electricityRate, panelKw }: SmartLoadShifterProps) {
-  const savings = dailyOutputKwh * electricityRate;
-  const peakShiftValue = Math.min(0.42, dailyOutputKwh / 100);
-  const optimizedSavings = savings * (0.2 + peakShiftValue);
+const APPLIANCES = [
+    { name: 'Water heater', powerKw: 2, durationHours: 2, icon: '🚿' },
+    { name: 'Washing machine', powerKw: 1, durationHours: 1, icon: '🧺' },
+    { name: 'EV charging', powerKw: 3.5, durationHours: 3, icon: '🚗' },
+];
 
-  const recommendations = [
-    {
-      name: 'Water Heater',
-      window: '10:00 AM - 1:00 PM',
-      load: '3.2 kWh',
-      benefit: '₹' + (3.2 * electricityRate).toFixed(0),
-    },
-    {
-      name: 'Washing Machine',
-      window: '11:30 AM - 1:30 PM',
-      load: '1.8 kWh',
-      benefit: '₹' + (1.8 * electricityRate).toFixed(0),
-    },
-    {
-      name: 'EV Charging',
-      window: '12:00 PM - 3:00 PM',
-      load: '4.5 kWh',
-      benefit: '₹' + (4.5 * electricityRate).toFixed(0),
-    },
-  ];
+function bestSolarWindow(hourlyOutput: number[], powerKw: number, durationHours: number) {
+    let bestStart = 8;
+    let bestSolarEnergy = -1;
 
-  return (
-    <div className="card" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <div>
-          <div className="section-label">Premium AI Load Shifter</div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--t1)' }}>Smart Appliance Scheduler</div>
-        </div>
-        <div className="badge badge-green" style={{ fontSize: 11 }}>+{optimizedSavings.toFixed(0)} savings</div>
-      </div>
+    for (let start = 6; start <= 18 - durationHours; start += 1) {
+        const solarEnergy = Array.from({ length: durationHours }, (_, offset) =>
+            Math.min(hourlyOutput[start + offset] ?? 0, powerKw)
+        ).reduce((total, energy) => total + energy, 0);
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <div style={{ padding: 14, borderRadius: 14, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)' }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 6 }}>Peak optimization</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--blue-bright)' }}>{(optimizedSavings / savings * 100).toFixed(0)}%</div>
-          <div style={{ fontSize: 12, color: 'var(--t2)' }}>Load shifted to solar surplus hours</div>
-        </div>
+        if (solarEnergy > bestSolarEnergy) {
+            bestSolarEnergy = solarEnergy;
+            bestStart = start;
+        }
+    }
 
-        <div style={{ padding: 14, borderRadius: 14, background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.25)' }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 6 }}>System size fit</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--green-bright)' }}>{panelKw.toFixed(1)} kW</div>
-          <div style={{ fontSize: 12, color: 'var(--t2)' }}>Ready for intelligent load balancing</div>
-        </div>
-      </div>
+    return {
+        start: bestStart,
+        solarEnergy: Math.max(0, bestSolarEnergy),
+        totalEnergy: powerKw * durationHours,
+    };
+}
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        {recommendations.map((item) => (
-          <div key={item.name} style={{ display: 'grid', gridTemplateColumns: '1.3fr 1fr 0.8fr', alignItems: 'center', gap: 10, padding: '10px 12px', borderRadius: 12, background: 'var(--raised)', border: '1px solid var(--b1)' }}>
-            <div>
-              <div style={{ fontWeight: 700, color: 'var(--t1)' }}>{item.name}</div>
-              <div style={{ fontSize: 12, color: 'var(--t2)' }}>{item.window}</div>
+function formatHour(hour: number) {
+    return `${String(hour % 12 || 12).padStart(2, '0')}:00 ${hour < 12 ? 'AM' : 'PM'}`;
+}
+
+export default function SmartLoadShifter({ hourlyOutput, electricityRate }: SmartLoadShifterProps) {
+    const recommendations = APPLIANCES.map((appliance) => {
+        const window = bestSolarWindow(hourlyOutput, appliance.powerKw, appliance.durationHours);
+        const gridEnergy = Math.max(0, window.totalEnergy - window.solarEnergy);
+        return {
+            ...appliance,
+            ...window,
+            gridEnergy,
+            estimatedSolarValue: window.solarEnergy * electricityRate,
+        };
+    });
+
+    return (
+        <section className="card" aria-labelledby="load-shifter-title" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                <div>
+                    <div className="section-label">Solar-aware scheduling</div>
+                    <h2 id="load-shifter-title" style={{ fontSize: 22, fontWeight: 800, color: 'var(--t1)' }}>Smart Appliance Scheduler</h2>
+                    <p style={{ fontSize: 12, color: 'var(--t2)', marginTop: 4 }}>Suggested windows are calculated from today&apos;s hourly generation forecast.</p>
+                </div>
+                <span className="badge badge-green">{recommendations.length} suggested schedules</span>
             </div>
-            <div style={{ fontSize: 12, color: 'var(--t2)' }}>{item.load}</div>
-            <div style={{ textAlign: 'right', fontWeight: 700, color: 'var(--green-bright)' }}>{item.benefit}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
+                {recommendations.map((item) => (
+                    <article key={item.name} style={{ padding: 14, borderRadius: 12, background: 'var(--raised)', border: '1px solid var(--b1)' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
+                            <strong style={{ color: 'var(--t1)' }}>{item.icon} {item.name}</strong>
+                            <span style={{ color: 'var(--green-bright)', fontWeight: 700 }}>{formatHour(item.start)}</span>
+                        </div>
+                        <div style={{ fontSize: 12, color: 'var(--t2)', marginTop: 8 }}>
+                            {item.durationHours} hr · {item.totalEnergy.toFixed(1)} kWh estimated load
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 12, marginTop: 6 }}>
+                            <span style={{ color: 'var(--t2)' }}>Solar covered</span>
+                            <span style={{ color: 'var(--t1)' }}>{item.solarEnergy.toFixed(1)} kWh</span>
+                        </div>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 8, fontSize: 12, marginTop: 3 }}>
+                            <span style={{ color: 'var(--t2)' }}>Grid remainder</span>
+                            <span style={{ color: 'var(--amber-bright)' }}>{item.gridEnergy.toFixed(1)} kWh</span>
+                        </div>
+                        <div style={{ fontSize: 11, color: 'var(--t3)', marginTop: 7 }}>
+                            Up to ₹{item.estimatedSolarValue.toFixed(0)} solar value at your current tariff
+                        </div>
+                    </article>
+                ))}
+            </div>
+            <p style={{ fontSize: 11, color: 'var(--t3)' }}>Planning estimate only; appliance loads are typical examples and actual usage varies.</p>
+        </section>
+    );
 }

@@ -1,52 +1,76 @@
 'use client';
 
+import { useState } from 'react';
+
 interface EnergyStorageOptimizerProps {
-  dailyOutputKwh: number;
-  electricityRate: number;
+    hourlyOutput: number[];
+    electricityRate: number;
 }
 
-export default function EnergyStorageOptimizer({ dailyOutputKwh, electricityRate }: EnergyStorageOptimizerProps) {
-  const chargeWindow = 11; // solar surplus hours
-  const dischargeWindow = 19; // evening peak
-  const storedEnergy = Math.min(dailyOutputKwh * 0.38, 18);
-  const savings = storedEnergy * electricityRate * 0.7;
+function bestChargeWindow(hourlyOutput: number[]) {
+    let bestStart = 9;
+    let bestEnergy = -1;
 
-  return (
-    <div className="card" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
-        <div>
-          <div className="section-label">Premium Battery Intelligence</div>
-          <div style={{ fontSize: 24, fontWeight: 800, color: 'var(--t1)' }}>Storage Optimization Engine</div>
-        </div>
-        <div className="badge badge-blue" style={{ fontSize: 11 }}>₹{savings.toFixed(0)}/day</div>
-      </div>
+    for (let start = 6; start <= 15; start += 1) {
+        const energy = hourlyOutput.slice(start, start + 4).reduce((sum, value) => sum + Math.max(0, value), 0);
+        if (energy > bestEnergy) {
+            bestStart = start;
+            bestEnergy = energy;
+        }
+    }
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <div style={{ padding: 14, borderRadius: 14, background: 'rgba(250,204,21,0.08)', border: '1px solid rgba(250,204,21,0.25)' }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 6 }}>Charge window</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--amber-bright)' }}>{chargeWindow}:00 - 15:00</div>
-          <div style={{ fontSize: 12, color: 'var(--t2)' }}>Best time to absorb extra solar</div>
-        </div>
+    return bestEnergy > 0 ? { start: bestStart } : null;
+}
 
-        <div style={{ padding: 14, borderRadius: 14, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.25)' }}>
-          <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 6 }}>Discharge window</div>
-          <div style={{ fontSize: 28, fontWeight: 800, color: 'var(--blue-bright)' }}>{dischargeWindow}:00 - 22:00</div>
-          <div style={{ fontSize: 12, color: 'var(--t2)' }}>Avoid expensive evening grid draw</div>
-        </div>
-      </div>
+function formatHour(hour: number) {
+    return `${String(hour % 12 || 12).padStart(2, '0')}:00 ${hour < 12 ? 'AM' : 'PM'}`;
+}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3,1fr)', gap: 10 }}>
-        {[
-          { label: 'Stored energy', value: `${storedEnergy.toFixed(1)} kWh` },
-          { label: 'Battery depth', value: '80%' },
-          { label: 'Grid offset', value: '63%' },
-        ].map((item) => (
-          <div key={item.label} style={{ padding: '12px 10px', borderRadius: 12, background: 'var(--raised)', border: '1px solid var(--b1)' }}>
-            <div style={{ fontSize: 11, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--t3)', marginBottom: 6 }}>{item.label}</div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: 'var(--t1)' }}>{item.value}</div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+export default function EnergyStorageOptimizer({ hourlyOutput, electricityRate }: EnergyStorageOptimizerProps) {
+    const [batteryCapacityKwh, setBatteryCapacityKwh] = useState(5);
+    const [selfConsumptionPercent, setSelfConsumptionPercent] = useState(35);
+    const dailyGenerationKwh = hourlyOutput.reduce((sum, value) => sum + Math.max(0, value), 0);
+    const availableSurplus = dailyGenerationKwh * (1 - selfConsumptionPercent / 100);
+    const storedEnergy = Math.min(availableSurplus, batteryCapacityKwh);
+    const deliveredEnergy = storedEnergy * 0.9;
+    const estimatedValue = deliveredEnergy * electricityRate;
+    const chargeWindow = bestChargeWindow(hourlyOutput);
+
+    return (
+        <section className="card" aria-labelledby="storage-optimizer-title" style={{ padding: 20, display: 'flex', flexDirection: 'column', gap: 16 }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+                <div>
+                    <div className="section-label">Battery scenario planner</div>
+                    <h2 id="storage-optimizer-title" style={{ fontSize: 22, fontWeight: 800, color: 'var(--t1)' }}>Storage Optimization Engine</h2>
+                    <p style={{ fontSize: 12, color: 'var(--t2)', marginTop: 4 }}>Charge window uses the strongest four-hour block in your hourly generation forecast.</p>
+                </div>
+                <span className="badge badge-blue">Estimated value ₹{estimatedValue.toFixed(0)}/day</span>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16 }}>
+                <label style={{ display: 'grid', gap: 7, color: 'var(--t2)', fontSize: 12 }}>
+                    <span>Battery capacity <strong style={{ color: 'var(--t1)' }}>{batteryCapacityKwh} kWh</strong></span>
+                    <input aria-label="Battery capacity in kilowatt-hours" type="range" min="1" max="30" step="1" value={batteryCapacityKwh} onChange={(event) => setBatteryCapacityKwh(Number(event.target.value))} />
+                </label>
+                <label style={{ display: 'grid', gap: 7, color: 'var(--t2)', fontSize: 12 }}>
+                    <span>Generation used directly <strong style={{ color: 'var(--t1)' }}>{selfConsumptionPercent}%</strong></span>
+                    <input aria-label="Percentage of solar generation used directly" type="range" min="0" max="90" step="5" value={selfConsumptionPercent} onChange={(event) => setSelfConsumptionPercent(Number(event.target.value))} />
+                </label>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 10 }}>
+                {[
+                    { label: 'Suggested charge', value: chargeWindow ? `${formatHour(chargeWindow.start)} – ${formatHour(chargeWindow.start + 4)}` : 'No solar surplus', color: 'var(--amber-bright)' },
+                    { label: 'Surplus available', value: `${availableSurplus.toFixed(1)} kWh`, color: 'var(--blue-bright)' },
+                    { label: 'Energy delivered', value: `${deliveredEnergy.toFixed(1)} kWh`, color: 'var(--green-bright)' },
+                ].map((metric) => (
+                    <div key={metric.label} style={{ padding: 12, borderRadius: 12, background: 'var(--raised)', border: '1px solid var(--b1)' }}>
+                        <div style={{ fontSize: 10, color: 'var(--t3)', textTransform: 'uppercase' }}>{metric.label}</div>
+                        <div style={{ fontSize: 18, fontWeight: 800, color: metric.color, marginTop: 3 }}>{metric.value}</div>
+                    </div>
+                ))}
+            </div>
+            <p style={{ fontSize: 11, color: 'var(--t3)' }}>Illustrative estimate assumes 10% battery round-trip loss and values delivered energy at the current import tariff. It excludes battery cost, export credits, and inverter limits.</p>
+        </section>
+    );
 }

@@ -12,6 +12,12 @@ A modern, intelligent solar energy dashboard that predicts solar output using bu
 - **ML Predictions**: Smart solar output estimates with a browser-friendly prediction engine
 - **AI Recommendations**: Built-in energy advice for appliance scheduling
 - **Experiment Mode**: Simulate different weather scenarios
+- **Solar Independence Simulator**: Explore estimated grid import and export for a household usage profile
+- **Maintenance Planner**: Track preventive-care checklist completions in the current browser
+- **Low-Yield Alerts**: Configure browser notifications for below-target daily generation forecasts
+- **Solar Load Scheduler**: Find appliance windows from the forecast's hourly generation profile
+- **Storage Scenario Planner**: Compare battery capacity and forecast surplus with adjustable assumptions
+- **Carbon Impact Estimate**: View indicative avoided emissions with the grid-factor assumption disclosed
 - **Beautiful UI**: Dark glassmorphism design with neon accents
 - **Fully Responsive**: Works perfectly on mobile, tablet, and desktop
 - **Vercel Ready**: Optimized for zero-config deployment
