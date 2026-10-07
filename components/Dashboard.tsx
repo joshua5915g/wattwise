@@ -45,6 +45,7 @@ import EnergyStorageOptimizer   from './EnergyStorageOptimizer';
 import CarbonForecastBoard      from './CarbonForecastBoard';
 import SolarIndependenceSimulator from './SolarIndependenceSimulator';
 import SolarMaintenancePlanner from './SolarMaintenancePlanner';
+import SolarYieldAlerts from './SolarYieldAlerts';
 
 
 
@@ -449,6 +450,10 @@ export default function Dashboard({
 
                     <div id="maintenance-planner">
                         <SolarMaintenancePlanner />
+                    </div>
+
+                    <div id="solar-yield-alerts">
+                        <SolarYieldAlerts dailyOutputKwh={pred.total_daily_output} location={location} />
                     </div>
 
                     {/* Row 7: Smart Appliance Load Dispatcher & Shifter */}
