@@ -43,6 +43,7 @@ import VirtualInverterTelemetry from './VirtualInverterTelemetry';
 import SmartLoadShifter         from './SmartLoadShifter';
 import EnergyStorageOptimizer   from './EnergyStorageOptimizer';
 import CarbonForecastBoard      from './CarbonForecastBoard';
+import SolarIndependenceSimulator from './SolarIndependenceSimulator';
 
 
 
@@ -441,6 +442,10 @@ export default function Dashboard({
                         <CarbonForecastBoard dailyOutputKwh={pred.total_daily_output} />
                     </div>
 
+                    <div id="energy-independence">
+                        <SolarIndependenceSimulator dailyGenerationKwh={pred.total_daily_output} />
+                    </div>
+
                     {/* Row 7: Smart Appliance Load Dispatcher & Shifter */}
                     <div id="load-dispatcher">
                         <ApplianceDispatcher prediction={pred} electricityRate={rate} />
@@ -616,4 +621,3 @@ export default function Dashboard({
         </div>
     );
 }
-
