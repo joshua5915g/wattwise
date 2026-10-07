@@ -40,6 +40,9 @@ import RooftopShadingSimulator  from './RooftopShadingSimulator';
 import SatelliteSolarRadiation  from './SatelliteSolarRadiation';
 import PMSuryaGharAssistant     from './PMSuryaGharAssistant';
 import VirtualInverterTelemetry from './VirtualInverterTelemetry';
+import SmartLoadShifter         from './SmartLoadShifter';
+import EnergyStorageOptimizer   from './EnergyStorageOptimizer';
+import CarbonForecastBoard      from './CarbonForecastBoard';
 
 
 
@@ -422,6 +425,21 @@ export default function Dashboard({
                         <Forecast7Day weather={weather} panelKw={panelKw} rate={rate} />
                     </div>
 
+
+                    {/* Premium feature 1: AI-powered load shifting */}
+                    <div id="load-shifter-premium">
+                        <SmartLoadShifter dailyOutputKwh={pred.total_daily_output} electricityRate={rate} panelKw={panelKw} />
+                    </div>
+
+                    {/* Premium feature 2: storage optimization engine */}
+                    <div id="storage-optimizer-premium">
+                        <EnergyStorageOptimizer dailyOutputKwh={pred.total_daily_output} electricityRate={rate} />
+                    </div>
+
+                    {/* Premium feature 3: carbon impact forecast */}
+                    <div id="carbon-forecast-premium">
+                        <CarbonForecastBoard dailyOutputKwh={pred.total_daily_output} />
+                    </div>
 
                     {/* Row 7: Smart Appliance Load Dispatcher & Shifter */}
                     <div id="load-dispatcher">
